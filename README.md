@@ -1,21 +1,25 @@
 # sparklyrfun
 
-## repartition
+## funcition
+
+### Repartition
 + sdf_repartition
 + sdf_partitions_size
 
-## feature
+### Feature vector
 + ft_word2Vec
 + ft_TFIDF
 
-## read file
+### Read file
 + spark_read_orc
 + spark_read_text
 
-## poivot
+### Poivot
 + sdf_pivot
 
-## schema
+### Schema
 + sdf_showDF
 + sdf_schema_tree(printSchema)
 
+##TODO
++ MinMaxScaler

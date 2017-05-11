@@ -1,6 +1,6 @@
 # sparklyrfun
 
-## funcition
+## Feature
 
 ### Repartition
 + sdf_repartition
@@ -21,5 +21,5 @@
 + sdf_showDF
 + sdf_schema_tree(printSchema)
 
-##TODO
+## TODO
 + MinMaxScaler

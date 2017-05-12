@@ -25,6 +25,7 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, sta
   tdf <- ml_prepare_dataframe(df, features, response, ml.options = ml.options,
                               envir = envir)
   envir$model <- "org.apache.spark.ml.classification.LogisticRegression"
+
   lr <- invoke_new(sc, envir$model)
   model <- lr %>%
     invoke("setMaxIter", iter.max) %>%
@@ -39,10 +40,17 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, sta
       invoke("weightCol", weightcol)
   }
 
+  paramsClass <- "org.apache.spark.ml.classification.LogisticRegressionParams"
+  thresholdParams <- invoke_new(sc, paramsClass)
+
   if(is.list(threshold)){
+    threshold <- thresholdParams <- invoke_new(sc, paramsClass) %>%
+      invoke("setThresholds", threshold)
     model <- lr %>%
     invoke("thresholds", threshold)
   }else{
+    threshold <- thresholdParams <- invoke_new(sc, paramsClass) %>%
+      invoke("setThreshold", threshold)
     model <- lr %>%
     invoke("threshold", threshold)
   }

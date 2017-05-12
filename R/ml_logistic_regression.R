@@ -32,19 +32,19 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, sta
     invoke("setLabelCol", envir$response) %>%
     invoke("setFitIntercept", as.logical(intercept)) %>%
     invoke("setElasticNetParam", as.double(alpha)) %>%
-    invoke("setStandardization", as.logical(standardization))
+    invoke("standardization", as.logical(standardization))
 
   if(!is.null(weightcol)){
     model <- lr %>%
-      invoke("setWeightCol", weightcol)
+      invoke("weightCol", weightcol)
   }
 
   if(is.list(threshold)){
     model <- lr %>%
-    invoke("setThresholds", threshold)
+    invoke("thresholds", threshold)
   }else{
     model <- lr %>%
-    invoke("setThreshold", threshold)
+    invoke("threshold", threshold)
   }
 
   if (only.model)

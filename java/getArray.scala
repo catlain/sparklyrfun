@@ -9,6 +9,6 @@ import org.apache.spark.sql.Column
 
 object getArray {
   def getItem1(col: Column)  = {
-    col.getItem(1)
+    col.getItem(0)
   }
 }

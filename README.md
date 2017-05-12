@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 $trim_whitespace
 [1] "trim_whitespace"
 
@@ -27,3 +28,30 @@ $sdf_partitions_size
 
 $sdf_schema_tree
 [1] "sdf_schema_tree"
+=======
+# sparklyrfun
+
+## Feature
+
+### Repartition
++ sdf_repartition
++ sdf_partitions_size
+
+### Feature vector
++ ft_word2Vec
++ ft_TFIDF
+
+### Read file
++ spark_read_orc
++ spark_read_text
+
+### Poivot
++ sdf_pivot
+
+### Schema
++ sdf_showDF
++ sdf_schema_tree(printSchema)
+
+## TODO
++ MinMaxScaler
+>>>>>>> a354d7bf4441c06e92f8aabae998e24fd7619760

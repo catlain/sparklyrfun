@@ -55,14 +55,10 @@
 # 
 # sc <- spark_connect(master = "local")
 # 
-# iris_local <- as.tibble(iris)
-# 
-# iris_local <- mutate(iris_local)
-# 
 # spark_hello <- function(sc) {
-#   sparklyr::invoke_static(sc, "SparklyrFunction.SparklyrFun", "getArray", hostapk)
+#   sparklyr::invoke_static(sc, "SparklyrFun.HelloWorld", "getArray", hostapk)
 # }
-# 
+
 # 
 # hostapk <- list("dqdqdad", "adqwdqd", "dqdqd")
 

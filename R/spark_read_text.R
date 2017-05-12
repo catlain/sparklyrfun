@@ -5,3 +5,4 @@ spark_read_text <- function (sc, name, path, options = list(), repartition = 0, 
                                 "text", options)
   spark_partition_register_df(sc, df, name, repartition, memory)
 }
+environment(spark_read_text) <- asNamespace('sparklyr')

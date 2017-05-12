@@ -6,3 +6,4 @@ sdf_schema_tree <- function (object){
   schemaString <- invoke(obj, "treeString")
   cat(schemaString)
 }
+environment(sdf_schema_tree) <- asNamespace('sparklyr')

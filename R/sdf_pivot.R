@@ -55,3 +55,4 @@ sdf_pivot <- function(x, formula, fun.aggregate = "count", col.aggregate) {
 
   sdf_register(result)
 }
+environment(sdf_pivot) <- asNamespace('sparklyr')

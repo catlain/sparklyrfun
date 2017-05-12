@@ -7,3 +7,4 @@ sdf_showDF <- function (x, ...) {
   }
   .local(x, ...)
 }
+environment(sdf_showDF) <- asNamespace('sparklyr')

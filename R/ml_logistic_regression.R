@@ -68,3 +68,4 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, sta
            ml.options = ml.options, categorical.transformations = categorical.transformations,
            model.parameters = as.list(envir))
 }
+environment(ml_logistic_regression) <- asNamespace('sparklyr')

@@ -5,6 +5,7 @@ sdf_partitions_size <- function(x) {
     invoke("partitions")
   length(partitions)
 }
+environment(sdf_partitions_size) <- asNamespace('sparklyr')
 
 sdf_repartition <- function(x, n = 1) {
 
@@ -19,3 +20,4 @@ sdf_repartition <- function(x, n = 1) {
   }
   sdf_register(result)
 }
+environment(sdf_repartition) <- asNamespace('sparklyr')

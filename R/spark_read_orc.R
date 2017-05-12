@@ -6,4 +6,3 @@ spark_read_orc <- function (sc, name, path, options = list(), repartition = 0, m
   spark_partition_register_df(sc, df, name, repartition, memory)
 }
 environment(spark_read_orc) <- asNamespace('sparklyr')
-

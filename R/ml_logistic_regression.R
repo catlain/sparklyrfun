@@ -16,7 +16,7 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, sta
   only.model <- ensure_scalar_boolean(ml.options$only.model)
   standardization <- ensure_scalar_boolean(standardization)
 
-  weightcol <- ifelse(is.null(weightcol), NULL, ensure_scalar_character(weightcol))
+  weightcol <- if(!is.null(weightcol)) ensure_scalar_character(weightcol)
   threshold <- ifelse(is.list(threshold), lapply(threshold, function(x) ensure_scalar_integer(x)), ensure_scalar_integer(threshold))
 
   envir <- new.env(parent = emptyenv())

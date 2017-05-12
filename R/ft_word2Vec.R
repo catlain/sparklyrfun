@@ -11,4 +11,4 @@ ft_word2Vec <- function (x, input.col = NULL, output.col = NULL, vector.size = 1
                                            setMaxIter = ensure_scalar_integer(max.iter),
                                            function(transformer, sdf) invoke(transformer, "fit", sdf)))
 }
-environment(sdf_showDF) <- asNamespace('sparklyr')
+environment(ft_word2Vec) <- asNamespace('sparklyr')

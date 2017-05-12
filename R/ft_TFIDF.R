@@ -11,4 +11,4 @@ ft_TFIDF <- function (x, input.col = NULL, output.col = NULL, num.features = 100
                                         setMinDocFreq = ensure_scalar_integer(min.freq),
                                         function(transformer, sdf) invoke(transformer, "fit", sdf)))
 }
-environment(sdf_showDF) <- asNamespace('sparklyr')
+environment(ft_TFIDF) <- asNamespace('sparklyr')

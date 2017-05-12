@@ -1,7 +1,6 @@
-ml_logistic_regression <- function (x, response, features, intercept = TRUE, standardization = TRUE, weightcol = NULL, threshold = 0.5, alpha = 0,
-          lambda = 0, iter.max = 100L, ml.options = ml_options(),
-          ...)
-{
+ml_logistic_regression <- function (x, response, features, intercept = TRUE, weightcol = NULL, standardization = TRUE, threshold = 0.5, alpha = 0,
+                                    lambda = 0, iter.max = 100L, ml.options = ml_options(),
+                                    ...){
   ml_backwards_compatibility_api()
   df <- spark_dataframe(x)
   sc <- spark_connection(df)
@@ -14,10 +13,10 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, sta
   lambda <- ensure_scalar_double(lambda)
   iter.max <- ensure_scalar_integer(iter.max)
   only.model <- ensure_scalar_boolean(ml.options$only.model)
-  standardization <- ensure_scalar_boolean(standardization)
 
   weightcol <- if(!is.null(weightcol)) ensure_scalar_character(weightcol)
-  threshold <- ifelse(is.list(threshold), lapply(threshold, function(x) ensure_scalar_integer(x)), ensure_scalar_integer(threshold))
+  threshold <- ifelse(is.list(threshold), lapply(threshold, function(x) ensure_scalar_double(x)), ensure_scalar_double(threshold))
+  standardization <- ensure_scalar_boolean(standardization)
 
   envir <- new.env(parent = emptyenv())
   envir$id <- ml.options$id.column
@@ -33,26 +32,20 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, sta
     invoke("setLabelCol", envir$response) %>%
     invoke("setFitIntercept", as.logical(intercept)) %>%
     invoke("setElasticNetParam", as.double(alpha)) %>%
-    invoke("standardization", as.logical(standardization))
+    invoke("setStandardization", standardization)
 
   if(!is.null(weightcol)){
     model <- lr %>%
-      invoke("weightCol", weightcol)
+      invoke("setWeightCol", weightcol)
   }
 
-  paramsClass <- "org.apache.spark.ml.classification.LogisticRegressionParams"
-  thresholdParams <- invoke_new(sc, paramsClass)
 
   if(is.list(threshold)){
-    threshold <- thresholdParams <- invoke_new(sc, paramsClass) %>%
+    model <- lr %>%
       invoke("setThresholds", threshold)
-    model <- lr %>%
-    invoke("thresholds", threshold)
   }else{
-    threshold <- thresholdParams <- invoke_new(sc, paramsClass) %>%
-      invoke("setThreshold", threshold)
     model <- lr %>%
-    invoke("threshold", threshold)
+      invoke("setThreshold", threshold)
   }
 
   if (only.model)

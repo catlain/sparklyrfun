@@ -22,9 +22,10 @@ object CF {
       val elemWiseProd: Array[Double] = runapp_vec.toArray.zip(pkgVecArr.toArray[Double]).map(entryTuple => entryTuple._1 * entryTuple._2)
       elemWiseProd.sum
     })
-
-    val cfRank = aidVec.select(col("aid"), col("runapp_vec")).withColumn("pkgVecArr",lit(pkgVec1)).
-      select(udf1(col("runapp_vec"), col("pkgVecArr")).alias("rank")) //udf case array => wrapped array
+    
+    aidVec.select(col("aid"), col("runapp_vec")).
+    withColumn("pkgVecArr",lit(pkgVec1)).
+    select(udf1(col("runapp_vec"), col("pkgVecArr")).alias("rank")) //udf case array => wrapped array
   }
 }
 

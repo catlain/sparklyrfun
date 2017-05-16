@@ -62,7 +62,12 @@
 #
 # hostapk <- list("dqdqdad", "adqwdqd", "dqdqd")
 
-
+ft_cfrank <- function(sc, aid_vec, pkg_vec, target_pkg = "com.cmcm.live") {
+  sdf_aid_vec <- spark_dataframe(aid_vec)
+  sdf_pkg_vec <- spark_dataframe(pkg_vec)
+  sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.CF", "getRank", sdf_aid_vec, sdf_pkg_vec, target_pkg)
+  sdf_register(sdf)
+}
 
 
 

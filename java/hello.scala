@@ -11,11 +11,11 @@ object CF {
     * @param pkgVec
     * @param tarpkg
     */
-  def getRank(aidVec:DataFrame, pkgVec:DataFrame, tarpkg:String) = {
-    val pkgVec1 = pkgVec.filter(col("runpkg") === tarpkg).collect()(0).
-      getAs[SparseVector]("aidarrayrun_vec").toArray
+  def getRank(aidVec:DataFrame, pkgVec:DataFrame, aidVecCol:String = "aidarrayrun_vec", pkgVecCol:String = "runapp_vec", aidCol:String = "aid", tarpkg:String = "com.cmcm.live") = {
+    val pkgVec1 = pkgVec.filter(col(pkgVecCol) === tarpkg).collect()(0).
+      getAs[SparseVector](pkgVecCol).toArray
 
-    val aidVec1 = aidVec.collect()(0).getAs[SparseVector]("runapp_vec")
+    val aidVec1 = aidVec.collect()(0).getAs[SparseVector](aidVecCol)
 
 
     val udf1 = udf((runapp_vec: SparseVector, pkgVecArr:Seq[Double]) =>{
@@ -23,9 +23,9 @@ object CF {
       elemWiseProd.sum
     })
     
-    aidVec.select(col("aid"), col("runapp_vec")).
+    aidVec.select(col(aidCol), col(aidVecCol)).
     withColumn("pkgVecArr",lit(pkgVec1)).
-    select(udf1(col("runapp_vec"), col("pkgVecArr")).alias("rank")) //udf case array => wrapped array
+    select(udf1(col(pkgVecCol), col("pkgVecArr")).alias("rank")) //udf case array => wrapped array
   }
 }
 

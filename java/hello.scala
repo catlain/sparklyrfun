@@ -23,7 +23,7 @@ object CF {
     
     aidVec.select(col(aidCol), col(aidVecCol)).
     withColumn("pkgVecArr",lit(pkgVecTarget)).
-    select(udf1(col(aidVecCol), col("pkgVecArr")).alias("rank")) 
+    select(col(aidCol), udf1(col(aidVecCol), col("pkgVecArr")).alias("rank")) 
   }
 }
 

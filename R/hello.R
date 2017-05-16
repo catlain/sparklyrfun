@@ -50,16 +50,16 @@
 
 
 # library(sparklyr)
-# library(sparklyrfun)
+# library(scalaUDF)
 # library(dplyr)
-# 
+#
 # sc <- spark_connect(master = "local")
-# 
+#
 # spark_hello <- function(sc) {
-#   sparklyr::invoke_static(sc, "SparklyrFun.HelloWorld", "getArray", hostapk)
+#   sparklyr::invoke_static(sc, "scalaUDF.HelloWorld", "getArray", hostapk)
 # }
 
-# 
+#
 # hostapk <- list("dqdqdad", "adqwdqd", "dqdqd")
 
 

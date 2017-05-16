@@ -11,9 +11,9 @@ object CF {
     * @param pkgVec
     * @param tarpkg
     */
-  def getRank(aidVec:DataFrame, pkgVec:DataFrame, aidVecCol:String = "runapp_vec", pkgVecCol:String = "aidarrayrun_vec", aidCol:String = "aid", tarpkg:String = "com.cmcm.live") = {
+  def getRank(aidVec:DataFrame, pkgVec:DataFrame, aidVecCol:String = "runapp_vec", pkgVecCol:String = "aidarrayrun_vec", aidCol:String = "aid", pkgCol:String = "runpkg", tarpkg:String = "com.cmcm.live") = {
     
-    val pkgVecTarget = pkgVec.filter(col(pkgVecCol) === tarpkg).collect()(0).
+    val pkgVecTarget = pkgVec.filter(col(pkgCol) === tarpkg).collect()(0).
       getAs[SparseVector](pkgVecCol).toArray
 
     val udf1 = udf((runapp_vec: SparseVector, pkgVecArr:Seq[Double]) =>{

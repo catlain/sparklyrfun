@@ -1,6 +1,7 @@
+# 1
 ft_word2Vec <- function (x, input.col = NULL, output.col = NULL, vector.size = 10, min.count = 0L, num.partitions = 100,
                          step.size = 0.025, max.iter = 10, max.sentence.length = 1000,
-                         window.size = 1L, get.vectors = FALSE, ...) {
+                         window.size = 1, get.vectors = FALSE, ...) {
   
   ml_backwards_compatibility_api()
   df <- spark_dataframe(x)

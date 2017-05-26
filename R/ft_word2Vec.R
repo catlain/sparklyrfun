@@ -1,7 +1,6 @@
 ft_word2Vec <- function (x, input.col = NULL, output.col = NULL, vector.size = 10, min.count = 0L, num.partitions = 100,
                          step.size = 0.025, max.iter = 10, max.sentence.length = 1000,
-                         window.size = 1L, get.vectors = FALSE, ...) {
-  
+                         window.size = 1, get.vectors = FALSE, seed = 100, ...) {
   ml_backwards_compatibility_api()
   df <- spark_dataframe(x)
   sc <- spark_connection(df)
@@ -16,15 +15,19 @@ ft_word2Vec <- function (x, input.col = NULL, output.col = NULL, vector.size = 1
     invoke("setStepSize", ensure_scalar_double(step.size)) %>%
     invoke("setMaxIter", ensure_scalar_integer(max.iter)) %>%
     invoke("setMaxSentenceLength", ensure_scalar_integer(max.sentence.length)) %>%
+    invoke("setSeed", ensure_scalar_integer(seed)) %>%
     invoke("fit", df)
   
   if(get.vectors){
-    result %>%
+    vectors <- result %>%
       invoke("getVectors") %>%
       sdf_register()
+    
+    assign()
+    
   }else{
     result %>%
-      invoke("transform") %>%
+      invoke("transform", df) %>%
       sdf_register()
   }
 }

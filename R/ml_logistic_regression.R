@@ -1,5 +1,5 @@
 ml_logistic_regression <- function (x, response, features, intercept = TRUE, weightcol = NULL, standardization = TRUE, threshold = 0.5, alpha = 0,
-                                    lambda = 0, iter.max = 100L, ml.options = ml_options(),
+                                    regparam = 0,iter.max = 100L, ml.options = ml_options(),
                                     ...){
   ml_backwards_compatibility_api()
   df <- spark_dataframe(x)
@@ -10,8 +10,9 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, wei
                                                categorical.transformations = categorical.transformations,
                                                ml.options = ml.options)
   alpha <- ensure_scalar_double(alpha)
-  lambda <- ensure_scalar_double(lambda)
   iter.max <- ensure_scalar_integer(iter.max)
+  intercept <- ensure_scalar_boolean(intercept)
+  regparam <- ensure_scalar_double(regparam)
   only.model <- ensure_scalar_boolean(ml.options$only.model)
 
   weightcol <- if(!is.null(weightcol)) ensure_scalar_character(weightcol)
@@ -30,9 +31,11 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, wei
     invoke("setMaxIter", iter.max) %>%
     invoke("setFeaturesCol",envir$features) %>%
     invoke("setLabelCol", envir$response) %>%
-    invoke("setFitIntercept", as.logical(intercept)) %>%
-    invoke("setElasticNetParam", as.double(alpha)) %>%
-    invoke("setStandardization", standardization)
+    invoke("setFitIntercept", intercept) %>%
+    invoke("setElasticNetParam", alpha) %>%
+    invoke("setStandardization", standardization) %>%
+    invoke("setRegParam", regparam) %>%
+    
 
   if(!is.null(weightcol)){
     model <- lr %>%

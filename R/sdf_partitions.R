@@ -7,15 +7,22 @@ sdf_partitions_size <- function(x) {
 }
 environment(sdf_partitions_size) <- asNamespace('sparklyr')
 
-sdf_repartition <- function (x, n = 100, cols = list()){
-  num <- sdf_partitions_size(x)
+sdf_repartition <- function (x, n = NULL, cols = list()){
+  num_repartition <- sdf_partitions_size(x)
   sdf <- spark_dataframe(x)
+  
+  if (is.null(n)){
+    num <- ensure_scalar_integer(num_repartition)
+  }else{
+    num <- ensure_scalar_integer(n)
+  }
+  
   if(length(cols) > 0){
     #column*
     col <- cols_repartition(x, cols)
-    result <- sdf %>% invoke("repartition", ensure_scalar_integer(n), col)
+    result <- sdf %>% invoke("repartition", num, col)
   }else{
-    result <- sdf %>% invoke("repartition", ensure_scalar_integer(n))
+    result <- sdf %>% invoke("repartition", num)
   }
   sdf_register(result)
 }

@@ -34,8 +34,7 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, wei
     invoke("setFitIntercept", intercept) %>%
     invoke("setElasticNetParam", alpha) %>%
     invoke("setStandardization", standardization) %>%
-    invoke("setRegParam", regparam) %>%
-    
+    invoke("setRegParam", regparam) 
 
   if(!is.null(weightcol)){
     model <- lr %>%

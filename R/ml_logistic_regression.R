@@ -1,3 +1,4 @@
+#1
 ml_logistic_regression <- function (x, response, features, intercept = TRUE, weightcol = NULL, standardization = TRUE, threshold = 0.5, alpha = 0,
                                     regparam = 0,iter.max = 100L, ml.options = ml_options(),
                                     ...){

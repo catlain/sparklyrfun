@@ -10,3 +10,4 @@ ft_geteval <- function(fit, df, binary = TRUE) {
     }
   })
 }
+environment(ft_geteval) <- asNamespace('sparklyr')

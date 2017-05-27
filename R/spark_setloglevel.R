@@ -5,4 +5,3 @@ spark_setloglevel <- function(sc, loglevel = "ERROR"){
     invoke("setLogLevel", loglevel)
 }
 environment(spark_setloglevel) <- asNamespace('sparklyr')
-

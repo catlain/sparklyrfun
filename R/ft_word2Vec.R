@@ -4,6 +4,8 @@ ft_word2Vec <- function (x, input.col = NULL, output.col = NULL, vector.size = 1
                          window.size = 1, get.vectors = FALSE, seed = 100, ...) {
   ml_backwards_compatibility_api()
   df <- spark_dataframe(x)
+  df.name <- as.character(x$ops[1]) 
+  
   sc <- spark_connection(df)
   class <- "org.apache.spark.ml.feature.Word2Vec"
   
@@ -23,10 +25,11 @@ ft_word2Vec <- function (x, input.col = NULL, output.col = NULL, vector.size = 1
     vectors <- result %>%
       invoke("getVectors") %>%
       sdf_register()
-  }else{
+    assign(vectors, paste0(df.name, "_vectors"), pos = sys.frame(0))
+    print(paste0("================",df.name, "_vectors is created============="))
+  }
     result %>%
       invoke("transform", df) %>%
       sdf_register()
-  }
 }
 environment(ft_word2Vec) <- asNamespace('sparklyr')

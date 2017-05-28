@@ -25,7 +25,7 @@ ft_word2Vec <- function (x, input.col = NULL, output.col = NULL, vector.size = 1
     vectors <- result %>%
       invoke("getVectors") %>%
       sdf_register()
-    assign(vectors, paste0(df.name, "_vectors"), pos = sys.frame(0))
+    assign(paste0(df.name, "_vectors"), vectors, pos = sys.frame(0))
     print(paste0("================",df.name, "_vectors is created============="))
   }
     result %>%

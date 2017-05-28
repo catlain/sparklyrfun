@@ -23,9 +23,6 @@ ft_word2Vec <- function (x, input.col = NULL, output.col = NULL, vector.size = 1
     vectors <- result %>%
       invoke("getVectors") %>%
       sdf_register()
-    
-    assign()
-    
   }else{
     result %>%
       invoke("transform", df) %>%

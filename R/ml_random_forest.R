@@ -1,4 +1,4 @@
-ml_random_forest <- function (x, response, features, max.bins = 32L, max.depth = 5L, thresholds = array(c(0.5, 0.5)),
+ml_random_forest <- function (x, response, features, max.bins = 32L, max.depth = 5L, thresholds = c(0.5, 0.5),
                               num.trees = 20L, type = c("auto", "regression", "classification"), 
                               ml.options = ml_options(), ...) 
 {
@@ -36,7 +36,7 @@ ml_random_forest <- function (x, response, features, max.bins = 32L, max.depth =
     invoke("setMaxBins", max.bins) %>%
     invoke("setMaxDepth", max.depth) %>%
     invoke("setNumTrees", num.trees) %>%
-    invoke("setThresholds", thresholds)
+    invoke("setThresholds", as.array(thresholds))
   
   if (is.function(ml.options$model.transform)) 
     model <- ml.options$model.transform(model)

@@ -35,12 +35,17 @@ ml_random_forest <- function (x, response, features, max.bins = 32L, max.depth =
     invoke("setLabelCol", envir$response) %>%
     invoke("setMaxBins", max.bins) %>%
     invoke("setMaxDepth", max.depth) %>%
+<<<<<<< HEAD
     invoke("setNumTrees", num.trees) 
   
   if(!is.null(thresholds)){
     model <- lr %>%
       invoke("setThresholds", threshold)
   }
+=======
+    invoke("setNumTrees", num.trees) %>%
+    invoke("setThresholds", as.array(thresholds))
+>>>>>>> 50373c4d9677356f0534ae2773c7274e4e1e5796
   
   if (is.function(ml.options$model.transform)) 
     model <- ml.options$model.transform(model)

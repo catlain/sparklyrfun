@@ -1,5 +1,4 @@
-#
-ml_random_forest <- function (x, response, features, max.bins = 32L, max.depth = 5L, thresholds = c(0.5, 0.5),
+ml_random_forest <- function (x, response, features, max.bins = 32L, max.depth = 5L, thresholds = NULL,
                               num.trees = 20L, type = c("auto", "regression", "classification"), 
                               ml.options = ml_options(), ...) 
 {
@@ -38,10 +37,14 @@ ml_random_forest <- function (x, response, features, max.bins = 32L, max.depth =
     invoke("setMaxDepth", max.depth) %>%
     invoke("setNumTrees", num.trees) 
   
-  if(!is.null(thresholds)){
+  if(is.list(thresholds)){
+    thresholds <- invoke("toArray", thresholds)
     model <- lr %>%
-      invoke("setThresholds", threshold)
+      invoke("setThresholds", thresholds)
+  }else{
+    message("thresholds need to be a \"list\" and pass an \"Array\" to scala by \"toArray\"")
   }
+  
   
   if (is.function(ml.options$model.transform)) 
     model <- ml.options$model.transform(model)

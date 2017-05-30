@@ -46,7 +46,7 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, wei
   if(is.list(threshold)){
     model <- lr %>%
       invoke("setThresholds", threshold)
-  }else{
+  }else if(!is.null(threshold)){
     model <- lr %>%
       invoke("setThreshold", threshold)
   }

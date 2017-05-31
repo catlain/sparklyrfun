@@ -41,7 +41,7 @@ ml_random_forest <- function (x, response, features, max.bins = 32L, max.depth =
     model <- rf %>%
       invoke("setThresholds", thresholds)
   }else{
-    message("thresholds need to be a \"list\"")
+    message(paste("thresholds need to be a \"list\" but a", class(thresholds)))
   }
   
   

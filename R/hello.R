@@ -52,10 +52,11 @@
 
 
 # library(sparklyr)
-# library(scalaUDF)
 # library(dplyr)
-#
 # sc <- spark_connect(master = "local")
+
+# iris_tbl <- copy_to(sc, iris)
+# mutate(iris_tbl, test = vecToSeq(Sepal_Length))
 #
 # spark_hello <- function(sc) {
 #   sparklyr::invoke_static(sc, "scalaUDF.HelloWorld", "getArray", hostapk)
@@ -64,17 +65,22 @@
 #
 # hostapk <- list("dqdqdad", "adqwdqd", "dqdqd")
 
-ft_cfrank <- function(sc, aid_vec, pkg_vec, aidvec_col = "runapp_vec", 
+ft_cfrank <- function(sc, aidvec_df, pkgvec_df, aidvec_col = "runapp_vec", 
                       pkgvec_col = "aidarrayrun_vec", aid_col = "aid", 
                       pkg_col = "runpkg", target_pkg = "com.cmcm.live") 
   {
-  sdf_aid_vec <- spark_dataframe(aid_vec)
-  sdf_pkg_vec <- spark_dataframe(pkg_vec)
-  sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.CF", "getRank", sdf_aid_vec, sdf_pkg_vec, aidvec_col, pkgvec_col, aid_col, pkg_col, target_pkg)
+  sdf_aid_vec <- spark_dataframe(aidvec_df)
+  sdf_pkg_vec <- spark_dataframe(pkgvec_df)
+  sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.udfs", "getRank", sdf_aid_vec, sdf_pkg_vec, aidvec_col, pkgvec_col, aid_col, pkg_col, target_pkg)
   sdf_register(sdf)
 }
 
 
-
+ft_vectortoarray <- function(sc, vec_df, input_col, output_col = "output_array") 
+  {
+  vec_sdf <- spark_dataframe(vec_df)
+  sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.udfs", "vectorToArray", vec_df, input_col, output_col)
+  sdf_register(sdf)
+}
 
 

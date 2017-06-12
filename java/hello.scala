@@ -1,52 +1,47 @@
 package Sparklyrfun
 
 import org.apache.spark.ml.linalg.{DenseVector, SparseVector, Vector}
-import org.apache.spark.sql.{DataFrame, SparkSession, Column}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 
-object udfs {
-  /**
-    *
+
+  /* object name need TOUPPPER ??!!! */
+
+object MyUdfs {
+    /**
+    * 
     * @param aidVec
     * @param pkgVec
-    * @param aidVecCol
-    * @param pkgVecCol
-    * @param aidCol
-    * @param pkgCol
     * @param tarpkg
-    * @return
     */
-  def getRank(aidVec:DataFrame, pkgVec:DataFrame, aidVecCol:String = "runapp_vec", pkgVecCol:String = "aidarrayrun_vec", aidCol:String = "aid", pkgCol:String = "runpkg", tarpkg:String = "com.cmcm.live") = {
-
-    val pkgVecTarget = pkgVec.filter(col(pkgCol) === tarpkg).collect()(0).
+  def getRank(aidVec:DataFrame, pkgVec:DataFrame, aidVecCol:String = "aidarrayrun_vec", pkgVecCol:String = "runapp_vec", aidCol:String = "aid", tarpkg:String = "com.cmcm.live") = {
+    val pkgVec1 = pkgVec.filter(col(pkgVecCol) === tarpkg).collect()(0).
       getAs[SparseVector](pkgVecCol).toArray
 
+    val aidVec1 = aidVec.collect()(0).getAs[SparseVector](aidVecCol)
+
+
     val udf1 = udf((runapp_vec: SparseVector, pkgVecArr:Seq[Double]) =>{
-      val elemWiseProd: Array[Double] = runapp_vec.toArray.zip(pkgVecArr.toArray[Double]).map(entryTuple => entryTuple._1 * entryTuple._2) //udf case array => wrapped array
+      val elemWiseProd: Array[Double] = runapp_vec.toArray.zip(pkgVecArr.toArray[Double]).map(entryTuple => entryTuple._1 * entryTuple._2)
       elemWiseProd.sum
     })
-
+    
     aidVec.select(col(aidCol), col(aidVecCol)).
-      withColumn("pkgVecArr",lit(pkgVecTarget)).
-      select(col(aidCol), udf1(col(aidVecCol), col("pkgVecArr")).alias("rank"))
+    withColumn("pkgVecArr",lit(pkgVec1)).
+    select(udf1(col(pkgVecCol), col("pkgVecArr")).alias("rank")) //udf case array => wrapped array
   }
-
-  /**
+    /**
     *
     * @param df
     * @param inputCol
     * @param outputCol
     * @return
     */
-  def VectorToSeq(df:DataFrame, inputCol:String, outputCol:String) = {
+  def vectorToArray(df:DataFrame, inputCol:String, outputCol:String) = {
 
-    val VectorToSeqUDF = udf((V:Vector) => V.toArray)
-    df.withColumn(outputCol, VectorToSeqUDF(col(inputCol)))
+    val vectorToSeqUDF = udf((V:Vector) => V.toArray)
+    df.withColumn(outputCol, vectorToSeqUDF(col(inputCol)))
 
   }
-
-
+  
 }
-
-
- 

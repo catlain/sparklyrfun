@@ -42,7 +42,7 @@
 # source("R/spark_default_compilation_spec.R")
 # setwd("/Users/xuyang/coding/up/sparklyrfun")
 # compile_package_jars()
-# setwd("/Users/xuyang/coding/up/")
+# setwd("/Users/xuyang/coding/up/") # 
 
 
 # ----- sc --------
@@ -71,7 +71,7 @@ ft_cfrank <- function(sc, aidvec_df, pkgvec_df, aidvec_col = "runapp_vec",
   {
   sdf_aid_vec <- spark_dataframe(aidvec_df)
   sdf_pkg_vec <- spark_dataframe(pkgvec_df)
-  sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.udfs", "getRank", sdf_aid_vec, sdf_pkg_vec, aidvec_col, pkgvec_col, aid_col, pkg_col, target_pkg)
+  sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.MYUDF", "getRank", sdf_aid_vec, sdf_pkg_vec, aidvec_col, pkgvec_col, aid_col, pkg_col, target_pkg)
   sdf_register(sdf)
 }
 
@@ -79,8 +79,19 @@ ft_cfrank <- function(sc, aidvec_df, pkgvec_df, aidvec_col = "runapp_vec",
 ft_vectortoarray <- function(sc, vec_df, input_col, output_col = "output_array") 
   {
   vec_sdf <- spark_dataframe(vec_df)
-  sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.udfs", "vectorToArray", vec_df, input_col, output_col)
+  sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.MYUDF", "vectorToSeq", vec_sdf, input_col, output_col)
   sdf_register(sdf)
 }
+
+# iris_tbl <- copy_to(sc, iris)
+# iris_tbl <- spark_dataframe(iris_tbl) %>%
+#   invoke("selectExpr", list("array(1,2,3) as newcol")) %>%
+#   sdf_register()
+# 
+# ft_vectortoarray(sc, iris_tbl, "newcol")
+# ft_cfrank(sc, iris_tbl, iris_tbl, "newcol", "newcol", "newcol", "newcol")
+
+
+
 
 

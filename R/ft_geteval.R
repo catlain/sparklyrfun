@@ -2,22 +2,23 @@ ft_geteval <- function(fit, df, binary = TRUE) {
   eval <- lapply(df, function(x){
     
     if(binary){
-      sdf_predict(fit, x) %>%
-        ml_binary_classification_eval("label", "prediction") %>%
-        data.frame("metric" = "auc")
-    }else{
-      
       auc <- sdf_predict(fit, x) %>%
         ml_binary_classification_eval("label", "prediction") %>%
-        data.frame("metric" = "auc")
-      
+        data.frame("auc" = .)
       acc <- sdf_predict(fit, x) %>%
         ml_classification_eval("label", "prediction", "accuracy") %>%
-        data.frame("metric" = "auc")
-      
-      bind_rows(auc, acc)
+        data.frame("acc" = .)
+      bind_cols(auc, acc)
+    }else{
+      sdf_predict(fit, x) %>%
+        ml_binary_classification_eval("label", "prediction") %>%
+        data.frame("acc" = .)
     }
-  }) %>%
+  })
+  
+  lapply(seq_along(eval), function(x){ 
+    data.frame("data" = names(eval[x]), eval[[x]])
+  }) %>% 
     bind_rows()
 }
 environment(ft_geteval) <- asNamespace('sparklyr')

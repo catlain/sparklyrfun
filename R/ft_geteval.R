@@ -2,8 +2,11 @@ ft_geteval <- function(fit, df, binary = TRUE, label = "label") {
   eval <- lapply(df, function(x){
     
     if(binary){
+      
+      # ml_binary_classification_eval need rawPrediction!!
+      
       auc <- sdf_predict(fit, x) %>%
-        ml_binary_classification_eval(label, "prediction") %>%
+        ml_binary_classification_eval(label, "rawPrediction") %>%
         data.frame("auc" = .)
       acc <- sdf_predict(fit, x) %>%
         ml_classification_eval(label, "prediction", "accuracy") %>%
@@ -11,7 +14,7 @@ ft_geteval <- function(fit, df, binary = TRUE, label = "label") {
       bind_cols(auc, acc)
     }else{
       sdf_predict(fit, x) %>%
-        ml_binary_classification_eval(label, "prediction") %>%
+        ml_classification_eval(label, "rawPrediction") %>%
         data.frame("acc" = .)
     }
   })

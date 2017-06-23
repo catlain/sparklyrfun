@@ -17,7 +17,14 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, wei
   only.model <- ensure_scalar_boolean(ml.options$only.model)
 
   weightcol <- if(!is.null(weightcol)) ensure_scalar_character(weightcol)
-  threshold <- ifelse(is.list(threshold), lapply(threshold, function(x) ensure_scalar_double(x)), ensure_scalar_double(threshold))
+  #threshold <- ifelse(is.list(threshold), lapply(threshold, function(x) ensure_scalar_double(x)), ensure_scalar_double(threshold))
+  # ifelse get list[1] ???
+  if(is.list(threshold)){
+    threshold <- lapply(threshold, function(x) ensure_scalar_double(x))
+  }else{
+    threshold <- ensure_scalar_double(threshold)
+  }
+  
   standardization <- ensure_scalar_boolean(standardization)
 
   envir <- new.env(parent = emptyenv())
@@ -46,9 +53,8 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, wei
   if(is.list(threshold)){
     model <- lr %>%
       invoke("setThresholds", threshold)
-  }else if(!is.null(threshold)){
-    model <- lr %>%
-      invoke("setThreshold", threshold)
+  }else{
+    message(paste("thresholds need to be a \"list\" but a", class(threshold)))
   }
 
   if (only.model)

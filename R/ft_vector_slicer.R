@@ -1,4 +1,4 @@
-ft_vector_slicer <- function (x, input.col = NULL, output.col = NULL, indices = list(1), ...) {
+ft_vector_slicer <- function (x, input.col = NULL, output.col = NULL, indices = list(1L), ...) {
   ml_backwards_compatibility_api()
   class <- "org.apache.spark.ml.feature.VectorSlicer"
   
@@ -14,3 +14,4 @@ ft_vector_slicer <- function (x, input.col = NULL, output.col = NULL, indices = 
                                            setIndices = indices))
 }
 environment(ft_vector_slicer) <- asNamespace('sparklyr')
+

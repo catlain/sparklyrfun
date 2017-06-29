@@ -78,7 +78,7 @@ ft_cf_rank <- function(aidvec_df, pkgvec_df, aidvec_col = "runapp_vec",
 }
 
 
-ft_vector_array <- function(vec_df, input_col, output_col = "output_array", ...) 
+ft_vector_array <- function(vec_df, input_col, output_col = "output_array") 
   {
   vec_sdf <- spark_dataframe(vec_df)
   sc <- spark_connection(vec_sdf)
@@ -87,11 +87,12 @@ ft_vector_array <- function(vec_df, input_col, output_col = "output_array", ...)
 }
 
 
-ft_vector_dot <- function(vec_df, input_col, output_col = "output_array", ...) 
+ft_vector_dot <- function(vec_df, input_col, output_col = "output_array", num_dot = 2) 
 {
   vec_sdf <- spark_dataframe(vec_df)
   sc <- spark_connection(vec_sdf)
-  sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.MyUdfs", "vectorDotVector", vec_sdf, input_col, output_col)
+  num_dot <- ensure_scalar_integer(num_dot)
+  sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.MyUdfs", "vectorDotVector", vec_sdf, input_col, output_col, num_dot)
   sdf_register(sdf)
 }
 

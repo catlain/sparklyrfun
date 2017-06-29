@@ -4,6 +4,9 @@ import org.apache.spark.ml.linalg.{DenseVector, SparseVector, Vector, Vectors}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 
+import scala.collection.mutable.ArrayBuffer
+
+
   /* object name need TOUPPPER ??!!! */
 
 object MyUdfs {
@@ -29,34 +32,51 @@ object MyUdfs {
     withColumn("pkgVecArr",lit(pkgVec1)).
     select(udf1(col(pkgVecCol), col("pkgVecArr")).alias("rank")) //udf case array => wrapped array
   }
+      /**
+      *
+      * @param df
+      * @param inputCol
+      * @param outputCol
+      * @return
+      */
+    def vectorToArray(df:DataFrame, inputCol:String, outputCol:String) = {
+      val vectorToSeqUDF = udf((V:Vector) => V.toArray)
+      df.withColumn(outputCol, vectorToSeqUDF(col(inputCol)))
+  
+    }
+  
+  
     /**
-    *
-    * @param df
-    * @param inputCol
-    * @param outputCol
-    * @return
-    */
-  def vectorToArray(df:DataFrame, inputCol:String, outputCol:String) = {
-    val vectorToSeqUDF = udf((V:Vector) => V.toArray)
-    df.withColumn(outputCol, vectorToSeqUDF(col(inputCol)))
+      *
+      * @param df
+      * @param inputCol
+      * @param outputCol
+      * @param num_dot
+      * @return
+      */
+    def vectorDotVector(df:DataFrame, inputCol:String, outputCol:String, num_dot:Int) = {
+      // def dotVec(inputVec:Vector) = {
+      // //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
+      // var buffer1 = new ArrayBuffer[Double]
+      // val outputVec = for (x <- inputVec.toArray) yield {
+      //   buffer1 +=
+      //   for {
+      //     y <- inputVec.toArray
+      //     if (!buffer1.contains(y))
+      //   }
+      //     yield x*y
+      // }
+      def dotVec(inputVec:Vector, num_dot:Int) = {
+        if (num_dot > inputVec.size - 1) {
+          val num_dot = inputVec.size - 1
+          printf("num_dot > inputVec.size and reduce to" + inputVec.size)
+        }
+    
+        val outputVec = inputVec.toArray.combinations(num_dot).toArray.map(x => x.reduce(_ * _))
+        Vectors.dense(outputVec)
+      }
+      val dotVecUDF = udf((inputVec:Vector) => dotVec(inputVec,num_dot))
+      df.withColumn(outputCol, dotVecUDF(col(inputCol)))
+    }
 
-  }
-  
-  
-def vectorDotVector(df:DataFrame, inputCol:String, outputCol:String) = {
-  def dotVec(inputVec:Vector) = {
-  //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
-  var n = 0
-  val outputVec = for (x <- inputVec.toArray) yield {
-    n += 1
-    for (y <- inputVec.toArray.drop(n)) yield x*y
-  }
-  Vectors.dense(outputVec.flatten)
-}
-  
-  val dotVecUDF = udf((V:Vector) => dotVec(V))
-  df.withColumn(outputCol, dotVecUDF(col(inputCol)))
-}
-  
-  
 }

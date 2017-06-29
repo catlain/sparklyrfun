@@ -4,9 +4,6 @@ import org.apache.spark.ml.linalg.{DenseVector, SparseVector, Vector, Vectors}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 
-import scala.collection.mutable.ArrayBuffer
-
-
   /* object name need TOUPPPER ??!!! */
 
 object MyUdfs {
@@ -49,14 +46,10 @@ object MyUdfs {
 def vectorDotVector(df:DataFrame, inputCol:String, outputCol:String) = {
   def dotVec(inputVec:Vector) = {
   //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
-  var buffer1 = new ArrayBuffer[Double]
+  var n = 0
   val outputVec = for (x <- inputVec.toArray) yield {
-    buffer1 += x
-    for {
-      y <- inputVec.toArray
-      if (!buffer1.contains(y))
-    }
-      yield x*y
+    n += 1
+    for (y <- inputVec.toArray.drop(n)) yield x*y
   }
   Vectors.dense(outputVec.flatten)
 }

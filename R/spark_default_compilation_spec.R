@@ -115,13 +115,16 @@ compile_package_jars <- function (...) { # only need 2.0 2.1
     jar_name <- el$jar_name
     scalac_path <- el$scalac_path
     # filter <- el$scala_filter # will case "invalid version specification ‘java’"
+    filter <- 
     if (is.null(spark_home) && !is.null(spark_version)) {
       message("==> downloading Spark ", spark_version)
       spark_install(spark_version, verbose = TRUE)
       spark_home <- spark_home_dir(spark_version)
     }
+    # spark_compile(jar_name = jar_name, spark_home = spark_home,
+    #               scalac = scalac_path, filter = filter)
     spark_compile(jar_name = jar_name, spark_home = spark_home,
-                  scalac = scalac_path, filter = filter)
+                  scalac = scalac_path, filter = NULL)
   }
 }
 environment(compile_package_jars) <- asNamespace('sparklyr')

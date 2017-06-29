@@ -55,27 +55,29 @@ object MyUdfs {
       * @return
       */
     def vectorDotVector(df:DataFrame, inputCol:String, outputCol:String, num_dot:Int) = {
-      // def dotVec(inputVec:Vector) = {
-      // //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
-      // var buffer1 = new ArrayBuffer[Double]
-      // val outputVec = for (x <- inputVec.toArray) yield {
-      //   buffer1 +=
-      //   for {
-      //     y <- inputVec.toArray
-      //     if (!buffer1.contains(y))
-      //   }
-      //     yield x*y
-      // }
-      def dotVec(inputVec:Vector, num_dot:Int) = {
-        if (num_dot > inputVec.size - 1) {
-          val num_dot = inputVec.size - 1
-          printf("num_dot > inputVec.size and reduce to" + inputVec.size)
-        }
+       def dotVec(inputVec:Vector) = {
+         //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
+         var n = 0
+         val outputVec = for (x <- inputVec.toArray) yield {
+           n += 1
+           for {
+             y <- inputVec.toArray.drop(n)
+           }
+             yield x * y
+         }
+         Vectors.dense(outputVec.flatten)
+       }
+         
+    //  def dotVec(inputVec:Vector, num_dot:Int) = {
+    //    if (num_dot > inputVec.size - 1) {
+    //      val num_dot = inputVec.size - 1
+    //      printf("num_dot > inputVec.size and reduce to" + inputVec.size)
+    //    }
     
-        val outputVec = inputVec.toArray.combinations(num_dot).toArray.map(x => x.reduce(_ * _))
-        Vectors.dense(outputVec)
-      }
-      val dotVecUDF = udf((inputVec:Vector) => dotVec(inputVec,num_dot))
+    //    val outputVec = inputVec.toArray.combinations(num_dot).toArray.map(_.reduce(_ * _))
+    //    Vectors.dense(outputVec)
+    //  }
+      val dotVecUDF = udf((inputVec:Vector) => dotVec(inputVec))
       df.withColumn(outputCol, dotVecUDF(col(inputCol)))
     }
 

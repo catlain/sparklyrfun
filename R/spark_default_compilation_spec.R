@@ -114,7 +114,7 @@ compile_package_jars <- function (...) { # only need 2.0 2.1
     spark_home <- el$spark_home
     jar_name <- el$jar_name
     scalac_path <- el$scalac_path
-    filter <- el$scala_filter
+    # filter <- el$scala_filter # will case "invalid version specification ‘java’"
     if (is.null(spark_home) && !is.null(spark_version)) {
       message("==> downloading Spark ", spark_version)
       spark_install(spark_version, verbose = TRUE)

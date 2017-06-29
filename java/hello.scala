@@ -4,6 +4,9 @@ import org.apache.spark.ml.linalg.{DenseVector, SparseVector, Vector, Vectors}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 
+import scala.collection.mutable.ArrayBuffer
+
+
   /* object name need TOUPPPER ??!!! */
 
 object MyUdfs {
@@ -43,20 +46,34 @@ object MyUdfs {
   }
   
   
-def vectorDotVector(df:DataFrame, inputCol:String, outputCol:String) = {
-  def dotVec(inputVec:Vector) = {
-  //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
-  var n = 0
-  val outputVec = for (x <- inputVec.toArray) yield {
-    n += 1
-    for (y <- inputVec.toArray.drop(n)) yield x*y
+  /**
+  * 
+  * @param df
+  * @param inputCol
+  * @param outputCol
+  * @param numDot
+  * @return
+  */
+def vectorDotVector(df:DataFrame, inputCol:String, outputCol:String, numDot:Int) = {
+  // def dotVec(inputVec:Vector) = {
+  // //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
+  // var buffer1 = new ArrayBuffer[Double]
+  // val outputVec = for (x <- inputVec.toArray) yield {
+  //   buffer1 +=
+  //   for {
+  //     y <- inputVec.toArray
+  //     if (!buffer1.contains(y))
+  //   }
+  //     yield x*y
+  // }
+  def dotVec(inputVec:Vector, numDot:Int) = {
+    val outputVec = inputVec.toArray.combinations(numDot).toArray.map(x => x.reduce(_ * _))
+    Vectors.dense(outputVec)
   }
-  Vectors.dense(outputVec.flatten)
-}
-  
-  val dotVecUDF = udf((V:Vector) => dotVec(V))
+  val dotVecUDF = udf((inputVec:Vector) => dotVec(inputVec, numDot))
   df.withColumn(outputCol, dotVecUDF(col(inputCol)))
 }
   
-  
+
+
 }

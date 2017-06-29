@@ -79,4 +79,5 @@ object MyUdfs {
       df.withColumn(outputCol, dotVecUDF(col(inputCol)))
     }
 
+
 }

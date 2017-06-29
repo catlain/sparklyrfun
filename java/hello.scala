@@ -40,29 +40,29 @@ object MyUdfs {
     * @return
     */
   def vectorToArray(df:DataFrame, inputCol:String, outputCol:String) = {
-
     val vectorToSeqUDF = udf((V:Vector) => V.toArray)
     df.withColumn(outputCol, vectorToSeqUDF(col(inputCol)))
 
   }
   
-  def vectorDotVector(df:DataFrame, inputCol:String, outputCol:String) = {
-    def dotVec(inputVec:Vector) = {
-    //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
-    var buffer1 = new ArrayBuffer[Double]
-    val outputVec = for (x <- inputVec.toArray) yield {
-      buffer1 += x
-      for {
-        y <- inputVec.toArray
-        if (!buffer1.contains(y))
-      }
-        yield x*y
+  
+def vectorDotVector(df:DataFrame, inputCol:String, outputCol:String) = {
+  def dotVec(inputVec:Vector) = {
+  //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
+  var buffer1 = new ArrayBuffer[Double]
+  val outputVec = for (x <- inputVec.toArray) yield {
+    buffer1 += x
+    for {
+      y <- inputVec.toArray
+      if (!buffer1.contains(y))
     }
-    Vectors.dense(outputVec.flatten)
-    }
-    
-    val dotVecUDF = udf((V:Vector) => dotVec(V))
-    df.withColumn(outputCol, dotVecUDF(col(inputCol)))
+      yield x*y
+  }
+  Vectors.dense(outputVec.flatten)
+}
+  
+  val dotVecUDF = udf((V:Vector) => dotVec(V))
+  df.withColumn(outputCol, dotVecUDF(col(inputCol)))
 }
   
   

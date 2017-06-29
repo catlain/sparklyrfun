@@ -65,7 +65,7 @@
 #
 # hostapk <- list("dqdqdad", "adqwdqd", "dqdqd")
 
-ft_cfrank <- function(sc, aidvec_df, pkgvec_df, aidvec_col = "runapp_vec", 
+ft_cf_rank <- function(sc, aidvec_df, pkgvec_df, aidvec_col = "runapp_vec", 
                       pkgvec_col = "aidarrayrun_vec", aid_col = "aid", 
                       pkg_col = "runpkg", target_pkg = "com.cmcm.live") 
   {
@@ -76,12 +76,21 @@ ft_cfrank <- function(sc, aidvec_df, pkgvec_df, aidvec_col = "runapp_vec",
 }
 
 
-ft_vectortoarray <- function(sc, vec_df, input_col, output_col = "output_array") 
+ft_vector_array <- function(sc, vec_df, input_col, output_col = "output_array") 
   {
   vec_sdf <- spark_dataframe(vec_df)
   sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.MyUdfs", "vectorToArray", vec_sdf, input_col, output_col)
   sdf_register(sdf)
 }
+
+
+ft_vector_dot <- function(sc, vec_df, input_col, output_col = "output_array") 
+{
+  vec_sdf <- spark_dataframe(vec_df)
+  sdf <- sparklyr::invoke_static(sc, "Sparklyrfun.MyUdfs", "vectorDotVector", vec_sdf, input_col, output_col)
+  sdf_register(sdf)
+}
+
 
 # iris_tbl <- copy_to(sc, iris)
 # iris_tbl <- spark_dataframe(iris_tbl) %>%

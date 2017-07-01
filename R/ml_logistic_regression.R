@@ -72,6 +72,13 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, wei
     areaUnderROC <- invoke(summary, "areaUnderROC")
     roc <- sdf_collect(invoke(summary, "roc"))
     coefficients <- intercept_first(coefficients)
+    
+    names(coefficients) <- features
+    ml_model("logistic_regression", fit, features = features,
+             response = response, intercept = intercept, coefficients = coefficients,
+             roc = roc, area.under.roc = areaUnderROC, data = df,
+             ml.options = ml.options, categorical.transformations = categorical.transformations,
+             model.parameters = as.list(envir))
   }else{
     coefficients <- fit %>% invoke("coefficientMatrix") %>% invoke("toArray")
     hasIntercept <- invoke(fit, "getFitIntercept")
@@ -81,13 +88,13 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, wei
       names(coefficients) <- c(features, "(Intercept)")
     }
     coefficients <- intercept_first(coefficients)
+    
+    names(coefficients) <- features
+    ml_model("logistic_regression", fit, features = features,
+             response = response, intercept = intercept, coefficients = coefficients,
+             data = df,ml.options = ml.options, categorical.transformations = categorical.transformations,
+             model.parameters = as.list(envir))
   }
-  names(coefficients) <- features
 
-  ml_model("logistic_regression", fit, features = features,
-           response = response, intercept = intercept, coefficients = coefficients,
-           roc = roc, area.under.roc = areaUnderROC, data = df,
-           ml.options = ml.options, categorical.transformations = categorical.transformations,
-           model.parameters = as.list(envir))
 }
 environment(ml_logistic_regression) <- asNamespace('sparklyr')

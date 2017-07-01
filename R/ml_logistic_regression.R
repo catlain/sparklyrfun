@@ -1,6 +1,6 @@
 #1
 ml_logistic_regression <- function (x, response, features, intercept = TRUE, weightcol = NULL, standardization = TRUE, threshold = NULL, alpha = 0,
-                                    regparam = 0,iter.max = 100L, ml.options = ml_options(),
+                                    regparam = 0,iter.max = 100L, binary = TRUE, ml.options = ml_options(),
                                     ...){
   ml_backwards_compatibility_api()
   df <- spark_dataframe(x)
@@ -60,7 +60,11 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, wei
   if (only.model)
     return(model)
   fit <- model %>% invoke("fit", tdf)
-  coefficients <- fit %>% invoke("coefficients") %>% invoke("toArray")
+  if(binary){
+    coefficients <- fit %>% invoke("coefficients") %>% invoke("toArray")
+  }esle{
+    coefficients <- fit %>% invoke("coefficientMatrix") %>% invoke("toArray")
+  }
   names(coefficients) <- features
   hasIntercept <- invoke(fit, "getFitIntercept")
   if (hasIntercept) {

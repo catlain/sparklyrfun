@@ -14,7 +14,7 @@ ft_geteval <- function(fit, df, binary = TRUE, label = "label") {
       bind_cols(auc, acc)
     }else{
       sdf_predict(fit, x) %>%
-        ml_classification_eval(label, "rawPrediction") %>%
+        ml_classification_eval(label, "prediction") %>%
         data.frame("acc" = .)
     }
   })

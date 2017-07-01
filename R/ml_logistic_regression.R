@@ -62,20 +62,28 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, wei
   fit <- model %>% invoke("fit", tdf)
   if(binary){
     coefficients <- fit %>% invoke("coefficients") %>% invoke("toArray")
+    hasIntercept <- invoke(fit, "getFitIntercept")
+    if (hasIntercept) {
+      intercept <- invoke(fit, "intercept")
+      coefficients <- c(coefficients, intercept)
+      names(coefficients) <- c(features, "(Intercept)")
+    }
+    summary <- invoke(fit, "summary")
+    areaUnderROC <- invoke(summary, "areaUnderROC")
+    roc <- sdf_collect(invoke(summary, "roc"))
+    coefficients <- intercept_first(coefficients)
   }else{
     coefficients <- fit %>% invoke("coefficientMatrix") %>% invoke("toArray")
+    hasIntercept <- invoke(fit, "getFitIntercept")
+    if (hasIntercept) {
+      intercept <- invoke(fit, "interceptVector")
+      coefficients <- c(coefficients, intercept)
+      names(coefficients) <- c(features, "(Intercept)")
+    }
+    coefficients <- intercept_first(coefficients)
   }
   names(coefficients) <- features
-  hasIntercept <- invoke(fit, "getFitIntercept")
-  if (hasIntercept) {
-    intercept <- invoke(fit, "intercept")
-    coefficients <- c(coefficients, intercept)
-    names(coefficients) <- c(features, "(Intercept)")
-  }
-  summary <- invoke(fit, "summary")
-  areaUnderROC <- invoke(summary, "areaUnderROC")
-  roc <- sdf_collect(invoke(summary, "roc"))
-  coefficients <- intercept_first(coefficients)
+
   ml_model("logistic_regression", fit, features = features,
            response = response, intercept = intercept, coefficients = coefficients,
            roc = roc, area.under.roc = areaUnderROC, data = df,

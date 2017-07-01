@@ -62,7 +62,7 @@ ml_logistic_regression <- function (x, response, features, intercept = TRUE, wei
   fit <- model %>% invoke("fit", tdf)
   if(binary){
     coefficients <- fit %>% invoke("coefficients") %>% invoke("toArray")
-  }esle{
+  }else{
     coefficients <- fit %>% invoke("coefficientMatrix") %>% invoke("toArray")
   }
   names(coefficients) <- features

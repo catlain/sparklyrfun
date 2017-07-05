@@ -23,7 +23,7 @@ object MyUdfs {
     val aidVec1 = aidVec.collect()(0).getAs[SparseVector](aidVecCol)
 
 
-    val udf1 = udf((runapp_vec: SparseVector, pkgVecArr:Seq[Double]) =>{
+    val udf1 = udf((runapp_vec: SparseVector, pkgVecArr:Seq[Double]) => {
       val elemWiseProd: Array[Double] = runapp_vec.toArray.zip(pkgVecArr.toArray[Double]).map(entryTuple => entryTuple._1 * entryTuple._2)
       elemWiseProd.sum
     })
@@ -68,7 +68,7 @@ object MyUdfs {
     //     Vectors.dense(outputVec.flatten)
     //   }
     
-        def dotVec(inputVec:Vector, numDot:Int) = {
+        val dotVecUDF =  udf((inputVec:Vector) => {
           var inputVecSize = inputVec.size
           if (numDot > inputVecSize - 1) {
             val num_dot = inputVecSize - 1
@@ -78,8 +78,9 @@ object MyUdfs {
     
           val outputVec = vecArr.combinations(numDot).toArray.map(_.map(inputVec(_)).reduce(_ * _))
           Vectors.dense(outputVec)
-        }
-      val dotVecUDF = udf((inputVec:Vector) => dotVec(inputVec,numDot))
+        })
+        
+      // val dotVecUDF = udf(dotVec(inputVec,numDot))
       df.withColumn(outputCol, dotVecUDF(col(inputCol)))
     }
 

@@ -90,8 +90,9 @@ object MyUdfs {
       }
       val vecArr:Seq[Int] = 1.to(inputVecSize)
   
-      val outputVec = vecArr.combinations(numDot).toArray.map(_.map(inputVec.toArray(_)).reduce(_ * _))
-      Vectors.dense(outputVec)
+      // val outputVec = vecArr.combinations(numDot).toArray.map(_.map(inputVec.toArray(_)).reduce(_ * _))
+      // Vectors.dense(outputVec)
+      vecArr.combinations(numDot).toArray.map(_.map(inputVec.toArray(_)).reduce(_ * _))
     })
 
 

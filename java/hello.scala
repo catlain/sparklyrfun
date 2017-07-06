@@ -44,7 +44,21 @@ object MyUdfs {
       df.withColumn(outputCol, vectorToSeqUDF(col(inputCol)))
   
     }
-  
+    
+    
+    // def dotVec(inputVec:Vector, numDot:Int) = {
+    //     var inputVecSize = inputVec.size
+    //     if (numDot > inputVecSize - 1) {
+    //       val num_dot = inputVecSize - 1
+    //       printf("num_dot > inputVec.size and reduce to" + inputVec.size)
+    //     }
+    //     val vecArr:Array[Int] = 1.to(inputVecSize).toArray
+    // 
+    //     val outputVec = vecArr.combinations(numDot).toArray.map(_.map(inputVec(_)).reduce(_ * _))
+    //     Vectors.dense(outputVec)
+    // }
+    
+    
   
   /**
     *
@@ -55,34 +69,35 @@ object MyUdfs {
     * @return
     */
     def vectorDotVector(df:DataFrame, inputCol:String, outputCol:String, numDot:Int) = {
-    //   def dotVec(inputVec:Vector) = {
-    //     //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
-    //     var n = 0
-    //     val outputVec = for (x <- inputVec.toArray) yield {
-    //       n += 1
-    //       for {
-    //         y <- inputVec.toArray.drop(n)
-    //       }
-    //         yield x * y
-    //     }
-    //     Vectors.dense(outputVec.flatten)
-    //   }
-    
-        val dotVecUDF =  udf((inputVec:Vector) => {
-          var inputVecSize = inputVec.size
-          if (numDot > inputVecSize - 1) {
-            val num_dot = inputVecSize - 1
-            printf("num_dot > inputVec.size and reduce to" + inputVec.size)
-          }
-          val vecArr:Array[Int] = 1.to(inputVecSize).toArray
-    
-          val outputVec = vecArr.combinations(numDot).toArray.map(_.map(inputVec(_)).reduce(_ * _))
-          Vectors.dense(outputVec)
-        })
-        
-      // val dotVecUDF = udf(dotVec(inputVec,numDot))
-      df.withColumn(outputCol, dotVecUDF(col(inputCol)))
-    }
+  //   def dotVec(inputVec:Vector) = {
+  //     //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
+  //     var n = 0
+  //     val outputVec = for (x <- inputVec.toArray) yield {
+  //       n += 1
+  //       for {
+  //         y <- inputVec.toArray.drop(n)
+  //       }
+  //         yield x * y
+  //     }
+  //     Vectors.dense(outputVec.flatten)
+  //   }
+
+    val dotVecUDF =  udf((inputVec:Vector) => {
+      var inputVecSize = inputVec.size
+      if (numDot > inputVecSize - 1) {
+        val num_dot = inputVecSize - 1
+        printf("num_dot > inputVec.size and reduce to" + inputVec.size)
+      }
+      val vecArr:Seq[Int] = 1.to(inputVecSize)
+  
+      val outputVec = vecArr.combinations(numDot).toArray.map(_.map(inputVec.toArray(_)).reduce(_ * _))
+      Vectors.dense(outputVec)
+    })
+
+
+    // val dotVecUDF = udf(dotVec(inputVec,numDot))
+    df.withColumn(outputCol, dotVecUDF(col(inputCol)))
+  }
 
 
 }

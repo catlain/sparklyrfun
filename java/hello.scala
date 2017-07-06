@@ -92,8 +92,7 @@ object MyUdfs {
   
       // val outputVec = vecArr.combinations(numDot).toArray.map(_.map(inputVec.toArray(_)).reduce(_ * _))
       // Vectors.dense(outputVec)
-      vecArr.combinations(numDot).toArray
-      //.map(_.map(inputVec.toArray(_)).reduce(_ * _))
+      vecArr.combinations(numDot).toArray.map(_.map(inputVec.toArray(_)).reduce(_ * _))
     })
 
 

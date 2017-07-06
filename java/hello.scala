@@ -20,11 +20,11 @@ object MyUdfs {
     val pkgVec1 = pkgVec.filter(col(pkgVecCol) === tarpkg).collect()(0).
       getAs[SparseVector](pkgVecCol).toArray
 
-    val aidVec1 = aidVec.collect()(0).getAs[SparseVector](aidVecCol)
+    // val aidVec1 = aidVec.collect()(0).getAs[SparseVector](aidVecCol)
 
 
-    val udf1 = udf((runapp_vec: SparseVector, pkgVecArr:Seq[Double]) => {
-      val elemWiseProd: Array[Double] = runapp_vec.toArray.zip(pkgVecArr.toArray[Double]).map(entryTuple => entryTuple._1 * entryTuple._2)
+    val udf1 = udf((runAppVec: SparseVector, targetPkgVecArr:Seq[Double]) => {
+      val elemWiseProd: Array[Double] = runAppVec.toArray.zip(targetPkgVecArr.toArray[Double]).map(entryTuple => entryTuple._1 * entryTuple._2)
       elemWiseProd.sum
     })
     
@@ -69,32 +69,34 @@ object MyUdfs {
     * @return
     */
     def vectorDotVector(df:DataFrame, inputCol:String, outputCol:String, numDot:Int) = {
-  //   def dotVec(inputVec:Vector) = {
-  //     //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
-  //     var n = 0
-  //     val outputVec = for (x <- inputVec.toArray) yield {
-  //       n += 1
-  //       for {
-  //         y <- inputVec.toArray.drop(n)
-  //       }
-  //         yield x * y
-  //     }
-  //     Vectors.dense(outputVec.flatten)
-  //   }
+    //   def dotVec(inputVec:Vector) = {
+    //     //  V.flatMap(x => for (y <- V) yield if(x != y) x*y else None).filter(_ != None).toVector
+    //     var n = 0
+    //     val outputVec = for (x <- inputVec.toArray) yield {
+    //       n += 1
+    //       for {
+    //         y <- inputVec.toArray.drop(n)
+    //       }
+    //         yield x * y
+    //     }
+    //     Vectors.dense(outputVec.flatten)
+    //   }
 
-    val dotVecUDF =  udf((inputVec:Vector) => {
-      var inputVecSize = inputVec.size
-      // if (numDot > inputVecSize - 1) {
-      //   val numDot = inputVecSize - 1
-      //   printf("num_dot > inputVec.size and reduce to" + inputVec.size)
-      // }
-      val vecArr:Seq[Int] = 1.to(inputVecSize)
-  
-      // val outputVec = vecArr.combinations(numDot).toArray.map(_.map(inputVec.toArray(_)).reduce(_ * _))
-      // Vectors.dense(outputVec)
-      vecArr.combinations(numDot).toArray.map(_.map(inputVec.toArray(_)).reduce(_ * _))
-    })
-
+        val dotVecUDF =  udf((inputVec:Vector) => {
+          var inputVecSize = inputVec.size
+          if (numDot > inputVecSize - 1) {
+            val numDot = inputVecSize - 1
+            printf("numDot > inputVec.size and reduce to" + numDot)
+          }
+          
+          val vecArr:Seq[Int] = 0.to(inputVecSize - 1)
+      
+          val outputVec = vecArr.combinations(numDot).toArray.map(_.map(inputVec(_)).reduce(_ * _))
+          Vectors.dense(outputVec)
+      
+          //val result: Array[Double] = vecArr.combinations(numDot).toArray.map(_.map(inputVec(_)).reduce(_ * _))
+      
+        })
 
     // val dotVecUDF = udf(dotVec(inputVec,numDot))
     df.withColumn(outputCol, dotVecUDF(col(inputCol)))

@@ -39,6 +39,7 @@
 
 # ----- compile ---------
 
+update.packages(checkBuilt = TRUE, ask = FALSE)
 # source("R/spark_default_compilation_spec.R")
 # setwd("/Users/xuyang/coding/up/sparklyrfun")
 # compile_package_jars()

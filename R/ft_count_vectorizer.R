@@ -46,3 +46,18 @@ ft_count_vectorizer <- function(x, input.col = NULL, output.col = NULL, min.df =
 }
 
 environment(ft_count_vectorizer) <- asNamespace('sparklyr')
+
+
+ft_model_save <- function(model, dir, overwrite = TRUE){
+  dir <- ensure_scalar_character(dir)
+  if(overwrite) system(paste0("hadoop fs -rm -r -skipTrash ", dir))
+  model %>% invoke("save", dir)
+}
+environment(ft_model_save) <- asNamespace('sparklyr')
+
+ft_model_load <- function(sc, dir, class = "org.apache.spark.ml.feature.CountVectorizerModel"){
+  dir <- ensure_scalar_character(dir)
+  class <- ensure_scalar_character(class)
+  invoke_static(sc, "org.apache.spark.ml.feature.CountVectorizerModel", "load", dir)
+}
+environment(ft_model_load) <- asNamespace('sparklyr')

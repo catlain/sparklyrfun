@@ -1,11 +1,14 @@
 Package: sparklyrfun
 Type: Package
 Title: sparklyrfun
-Version: 0.1.2
+Version: 0.1.3
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
+Imports: dplyr, sparklyr
 Encoding: UTF-8
 LazyData: flase
+RoxygenNote: 6.0.1
+

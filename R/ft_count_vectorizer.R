@@ -25,7 +25,9 @@ ft_count_vectorizer <- function(x, input.col = NULL, output.col = NULL, min.df =
     transformed <- invoke(model, "transform", sdf)
     sdf_register(transformed)
   }else{
-    vocab.size <- ensure_scalar_integer(vocab.size)
+    if(!is.null(vocab.size)){
+      vocab.size <- ensure_scalar_integer(vocab.size)
+    }
     arguments <- list(
       setInputCol   = ensure_scalar_character(input.col),
       setOutputCol  = ensure_scalar_character(output.col),

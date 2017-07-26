@@ -1,12 +1,12 @@
-ft_vector_slicer <- function (x, input.col = NULL, output.col = NULL, indices = list(1L), ...) {
+ft_vector_slicer <- function (x, input.col = NULL, output.col = NULL, indices = c(1), ...) {
   ml_backwards_compatibility_api()
   class <- "org.apache.spark.ml.feature.VectorSlicer"
   # indices need to be array !!!!!
   if(is.list(indices)){
-    indices <- as.array(lapply(indices, function(x) ensure_scalar_integer(x - 1))) # sacla array start from 0 !!
+    indices <- as.array(unique(as.integer(indices - 1))) # sacla array start from 0 !!
   }else{
-    message(paste("indices need to be a list, but a", class(indices)))
-    indices <- list()
+    message(paste("indices need to be a array, but a", class(indices)))
+    indices <- array()
   }
   
   invoke_simple_transformer(x, class, list(setInputCol = ensure_scalar_character(input.col),

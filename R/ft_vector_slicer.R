@@ -2,10 +2,10 @@ ft_vector_slicer <- function (x, input.col = NULL, output.col = NULL, indices = 
   ml_backwards_compatibility_api()
   class <- "org.apache.spark.ml.feature.VectorSlicer"
   # indices need to be array !!!!!
-  if(is.list(indices)){
+  if(is.vector(indices)){
     indices <- as.array(unique(as.integer(indices - 1))) # sacla array start from 0 !!
   }else{
-    message(paste("indices need to be a array, but a", class(indices)))
+    message(paste("indices need to be a vector, but a", class(indices)))
     indices <- array()
   }
   

@@ -12,3 +12,5 @@ ft_TFIDF <- function (x, input.col = NULL, output.col = NULL, num.features = 100
                                         function(transformer, sdf) invoke(transformer, "fit", sdf)))
 }
 environment(ft_TFIDF) <- asNamespace('sparklyr')
+
+
